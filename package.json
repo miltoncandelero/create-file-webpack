@@ -1,24 +1,21 @@
 {
   "name": "create-file-webpack",
-  "version": "1.0.2",
+  "version": "1.0.2-dev",
   "description": "Webpack plugin for creating the file with the particular content",
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Appius/create-file-webpack.git"
+    "url": "git+https://github.com/miltoncandelero/create-file-webpack.git"
   },
   "keywords": [
     "webpack",
     "webpack-plugin"
   ],
-  "author": "Appius",
+  "author": "miltoncandelero",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Appius/create-file-webpack/issues"
+    "url": "https://github.com/miltoncandelero/create-file-webpack/issues"
   },
-  "homepage": "https://github.com/Appius/create-file-webpack#readme",
-  "dependencies": {
-    "path": "^0.12.7",
-    "write": "^1.0.3"
-  }
+  "homepage": "https://github.com/miltoncandelero/create-file-webpack#readme",
+  "dependencies": {}
 }

@@ -1,46 +1,43 @@
-'use strict';
-var CreateFilePlugin = (function () {
-  const write = require('write');
-  const path = require('path');
-
-  function CreateFilePlugin(options){
-    if (options === void 0) {
-      throw new Error(`Please provide 'options' for the CreateFilePlugin config`);
-    }
-
-    if (options.path == null) {
-      throw new Error(`Please provide 'options.path' in the CreateFilePlugin config`);
-    }
-
-    if (options.fileName == null) {
-      throw new Error(`Please provide 'options.fileName' in the CreateFilePlugin config`);
-    }
-
-    if (options.content == null) {
-      throw new Error(`Please provide 'options.content' in the CreateFilePlugin config`);
-    }
-
-    this.options = options;
-  }
-
-  function _createFile(filePath, fileName, content) {
-    return () => {
-      const fullPath = path.join(filePath, fileName);
-      write.sync(fullPath, content);
-    }
-  }
-
-  CreateFilePlugin.prototype.apply = function (compiler) {
-    const createFile = () => _createFile(this.options.path, this.options.fileName, this.options.content);
-
-    if (!!compiler.hooks) {
-      compiler.hooks.done.tap('CreateFileWebpack', createFile());
-    } else {
-      compiler.plugin('done', createFile());
-    }
+class CreateFileWebpack {
+  static defaultOptions = {
+    outputFile: 'output.json',
+    content: '{"hello":"world"}'
   };
 
-  return CreateFilePlugin;
-})();
+  // Any options should be passed in the constructor of your plugin,
+  // (this is a public API of your plugin).
+  constructor(options = {}) {
+    // Applying user-specified options over the default options
+    // and making merged options further available to the plugin methods.
+    // You should probably validate all the options here as well.
+    this.options = { ...CreateFileWebpack.defaultOptions, ...options };
+  }
 
-module.exports = CreateFilePlugin;
+  apply(compiler) {
+    const pluginName = CreateFileWebpack.name;
+
+    // webpack module instance can be accessed from the compiler object,
+    // this ensures that correct version of the module is used
+    // (do not require/import the webpack or any symbols from it directly).
+    const { webpack } = compiler;
+
+    // Compilation object gives us reference to some useful constants.
+    const { Compilation } = webpack;
+
+    // RawSource is one of the "sources" classes that should be used
+    // to represent asset sources in compilation.
+    const { RawSource } = webpack.sources;
+
+    // Tapping to the "thisCompilation" hook in order to further tap
+    // to the compilation process on an earlier stage.
+    compiler.hooks.thisCompilation.tap(pluginName, (compilation) => {
+
+      compilation.emitAsset(
+        this.options.outputFile,
+        new RawSource(this.options.content)
+      );
+    });
+  }
+}
+
+module.exports = { CreateFileWebpack };
